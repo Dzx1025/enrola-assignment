@@ -19,11 +19,13 @@ Build and improve an **AI Agent** that sells a pen.
 - **Implement a basic test or evaluation** to measure how well your agent performs with different conversation inputs.
 
 ### Extra-credit ideas (optional)
-If you’re feeling ambitious, consider adding:
+If you’re feeling ambitious, consider adding or writing a plan for:
 - ✅ **Structured output** — e.g. text output + lead interest classification + sales stage.
 - ✅ **A lightweight eval framework** — test different prompts, models, or temperatures, or use AI to score outputs.
-- ✅ **Tool/function use** — call a fake API or local function for product details.
+- ✅ **Tool/function use** — call a local function for product details.
 - ✅ **Spring AI integration** — refactor to use [Spring AI](https://spring.io/projects/spring-ai).
+- ✅ **Conversation Memory** — is there a different way to manage conversation memory? What are the advantages/disadvantages of the different approaches?
+- ✅ **Few-Shot** — can few-shot prompting be implemented and how does it improve performance?
 
 You don’t have to do any of these, but they’ll help us see how you think about applied AI.
 
@@ -100,6 +102,8 @@ export OPENAI_API_KEY=<<YOUR_OPENAI_API_KEY>>
 ./mvnw -Dtest=PenSalesOpenAiAgentTest test
 ```
 
+If you are running using IntelliJ (not the command line), then you'll want to add that OPENAI_API_KEY as an environment variable in your run configuration.
+
 ---
 
 ## 🧩 Project Structure
@@ -115,7 +119,7 @@ export OPENAI_API_KEY=<<YOUR_OPENAI_API_KEY>>
 ## 🚀 What to Submit
 
 1. Push your completed project to **your own public GitHub repo**.
-2. Update this README to describe:
+2. Re-write this README to describe:
     - What you built
     - Why you made your design choices
     - How to run and test your agent
