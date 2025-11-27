@@ -1,13 +1,15 @@
 package com.getenrola.aidemo;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
-public class AidemoApplication {
+public class AiSalesAgentApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AidemoApplication.class, args);
+        SpringApplication.run(AiSalesAgentApplication.class, args);
     }
 
 }

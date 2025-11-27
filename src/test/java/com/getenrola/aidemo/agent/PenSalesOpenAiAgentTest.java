@@ -1,52 +1,54 @@
 package com.getenrola.aidemo.agent;
 
-import com.getenrola.aidemo.model.AgentRequest;
-import com.openai.models.ChatModel;
+import com.getenrola.aidemo.model.AgentResult;
+import com.getenrola.aidemo.model.WorkerResponse;
+import com.getenrola.aidemo.worker.ClosingWorker;
+import com.getenrola.aidemo.worker.GeneralWorker;
+import com.getenrola.aidemo.worker.ObjectionWorker;
+import com.getenrola.aidemo.worker.PriceComparisonWorker;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Map;
 
-class PenSalesOpenAiAgentTest {
 
-    private final PenSalesOpenAiAgent penSalesOpenAiAgent = new PenSalesOpenAiAgent();
+@SpringBootTest
+public class PenSalesOpenAiAgentTest {
 
+    @Autowired
+    private OpenAiClientWrapper openAiClientWrapper;
 
     @Test
-    void testScript() {
-        String chatModel = ChatModel.GPT_3_5_TURBO.asString();
-        String previousResponseId = null;
-        var agentRequest = new AgentRequest("Hi, my name is Fred", previousResponseId, chatModel);
-        System.out.println("User: " + agentRequest.userText());
-        var agentReply = penSalesOpenAiAgent.execute(agentRequest);
-        System.out.println("Agent: " + agentReply.text());
-        assertThat(agentReply.responseId()).isNotNull();
-        assertThat(agentReply.text()).isNotNull();
-        previousResponseId = agentReply.responseId();
-
-        agentRequest = new AgentRequest("How much is the pen?", previousResponseId, chatModel);
-        System.out.println("User: " + agentRequest.userText());
-        agentReply = penSalesOpenAiAgent.execute(agentRequest);
-        System.out.println("Agent: " + agentReply.text());
-        assertThat(agentReply.responseId()).isNotNull();
-        assertThat(agentReply.text()).isNotNull();
-        previousResponseId = agentReply.responseId();
-
-        agentRequest = new AgentRequest("Seems expensive!", previousResponseId, chatModel);
-        System.out.println("User: " + agentRequest.userText());
-        agentReply = penSalesOpenAiAgent.execute(agentRequest);
-        System.out.println("Agent: " + agentReply.text());
-        assertThat(agentReply.responseId()).isNotNull();
-        assertThat(agentReply.text()).isNotNull();
-        previousResponseId = agentReply.responseId();
-
-        agentRequest = new AgentRequest("Can you email me a brochure?", previousResponseId, chatModel);
-        System.out.println("User: " + agentRequest.userText());
-        agentReply = penSalesOpenAiAgent.execute(agentRequest);
-        System.out.println("Agent: " + agentReply.text());
-        assertThat(agentReply.responseId()).isNotNull();
-        assertThat(agentReply.text()).isNotNull();
-        previousResponseId = agentReply.responseId();
-
+    void generalWorkerTest() throws Exception {
+        GeneralWorker worker = new GeneralWorker(openAiClientWrapper);
+        ConversationState state = new ConversationState();
+        WorkerResponse result = worker.handle("Hello, I am interested in buying a pen.", state);
+        Assertions.assertNotNull(result);
     }
 
+    @Test
+    void orchestratorTest() throws Exception {
+        Orchestrator orchestrator = new Orchestrator(
+                Map.of(
+                        "general", new GeneralWorker(openAiClientWrapper),
+                        "price_comparison", new PriceComparisonWorker(openAiClientWrapper),
+                        "objection", new ObjectionWorker(openAiClientWrapper),
+                        "closing", new ClosingWorker(openAiClientWrapper)
+                ),
+                openAiClientWrapper
+        );
+
+        ConversationState state = new ConversationState();
+        AgentResult r1 = orchestrator.route("Hi", state);
+        Assertions.assertNotNull(r1);
+        AgentResult r2 = orchestrator.route("I need a pen for signing contracts", state);
+        Assertions.assertNotNull(r2);
+        AgentResult r3 = orchestrator.route("How much does it cost?", state);
+        Assertions.assertNotNull(r3);
+        AgentResult r4 = orchestrator.route("Sounds good, send link", state);
+        Assertions.assertNotNull(r4);
+        System.out.println(state.getHistory());
+    }
 }
