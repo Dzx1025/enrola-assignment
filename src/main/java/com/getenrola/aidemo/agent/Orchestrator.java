@@ -11,46 +11,109 @@ public class Orchestrator {
     private final Map<String, Worker> workers;
     private final OpenAiClientWrapper openAi;
 
+    record RoutingDecision(String worker, String reasoning) {
+    }
+
     public Orchestrator(Map<String, Worker> workers, OpenAiClientWrapper openAi) {
         this.workers = workers;
         this.openAi = openAi;
     }
 
     public AgentResult route(String userInput, ConversationState state) throws Exception {
-        // Save user input to conversation state
         state.addMessage("User: " + userInput);
-        // Use LLM to select the appropriate worker
-        String prompt = String.format("""
-                        Given the user's message: "%s" and the user's current interest level: %d,
-                        Select the most appropriate worker to handle this message from the following options: %s.
-                        Respond with only the worker's name.
+
+        // Build rich routing context
+        String routingPrompt = buildRoutingPrompt(userInput, state);
+
+        // Get LLM routing decision
+        RoutingDecision decision = openAi.callModel(
+                routingPrompt,
+                "gpt-5-mini",
+                RoutingDecision.class
+        );
+
+        // Validate and fallback
+        String selectedWorker = decision.worker();
+        if (!workers.containsKey(selectedWorker)) {
+            selectedWorker = "generalWorker";
+        }
+
+        // Execute worker
+        Worker worker = workers.get(selectedWorker);
+        WorkerResponse response = worker.handle(userInput, state);
+
+        // Handle worker's recommendation for next worker
+        if (response.confidence() < 0.5 && response.next_recommended_worker() != null) {
+            // Worker is not confident, try recommended worker
+            Worker nextWorker = workers.get(response.next_recommended_worker());
+            if (nextWorker != null) {
+                response = nextWorker.handle(userInput, state);
+                selectedWorker = response.next_recommended_worker();
+            }
+        }
+
+        // Update state
+        state.addMessage("Agent: " + response.message());
+        if (response.slots() != null && !response.slots().isEmpty()) {
+            response.slots().forEach(state::putSlot);
+        }
+
+        // Adjust interest with bounds checking
+        int currentInterest = state.getInterestScore();
+        int delta = (int) Math.round(response.lead_interest() * 10);  // Scale to -10 to +10
+        int newInterest = Math.max(0, Math.min(10, currentInterest + delta));
+        state.setInterestScore(newInterest);
+        state.setCurrentStage(response.stage());
+
+        // Build result
+        AgentResult result = new AgentResult();
+        result.setReplyAgent(selectedWorker);
+        result.setSalesStage(response.stage());
+        result.setInterest(newInterest);
+        result.setMessage(response.message());
+
+        return result;
+    }
+
+    private String buildRoutingPrompt(String userInput, ConversationState state) {
+        return String.format("""
+                        # Router Instructions
+                        Select the BEST worker to handle this user message.
+                        
+                        ## Context
+                        - User message: "%s"
+                        - Current interest: %d/10
+                        - Current stage: %s
+                        - Extracted slots: %s
+                        - Last 3 messages: %s
+                        
+                        ## Available Workers
+                        - generalWorker: Initial contact, discovery, general questions
+                        - priceComparisonWorker: Price concerns, budget questions, value comparisons
+                        - objectionWorker: Objections, hesitations, concerns, "need to think"
+                        - closingWorker: High interest, buying signals, ready to purchase
+                        
+                        ## Routing Logic
+                        1. If user mentions price/cost/expensive → "priceComparisonWorker"
+                        2. If user shows objection/concern/hesitation → "objectionWorker"
+                        3. If interest ≥7 OR user asks "how to buy/next steps" → "closingWorker"
+                        4. Otherwise → "generalWorker"
+                        
+                        ## Special Cases
+                        - If user says "not interested" → "generalWorker" (for graceful exit)
+                        - If conversation is stuck (same objection 2+ times) → "objectionWorker"
+                        
+                        Respond with JSON: {"worker": "name", "reasoning": "why"}
                         """,
                 userInput,
                 state.getInterestScore(),
-                String.join(", ", workers.keySet())
+                state.getCurrentStage(),
+                state.getSlots(),
+                state.getHistory(3)
         );
-        String selected = openAi.callModel(
-                "",
-                prompt,
-                "gpt-5-mini", String.class);
+    }
 
-        if (!workers.containsKey(selected)) { // Fallback to general worker if selection is invalid
-            selected = "general";
-        }
-        Worker selectedWorker = workers.get(selected);
-        // Call the selected worker
-        WorkerResponse workerResponse = selectedWorker.handle(userInput, state);
-        // Update conversation state
-        state.addMessage("Agent: " + workerResponse.message());
-        workerResponse.slots().forEach(state::putSlot);
-        // Adjust interest level
-        int weight = 10;
-        int delta = (int) ((double) workerResponse.lead_interest() * weight);
-        state.adjustInterest(delta);
-        // Return AgentResult
-        AgentResult result = new AgentResult();
-        result.setReplyAgent(selected);
-        result.setInterest(state.getInterestScore());
-        return result;
+    public Map<String, Worker> getWorkers() {
+        return workers;
     }
 }

@@ -5,6 +5,7 @@ public class AgentResult {
     private String replyAgent;
     private String salesStage;
     private int interest;
+    private String message;
 
     public String getReplyAgent() {
         return replyAgent;
@@ -28,5 +29,13 @@ public class AgentResult {
 
     public void setInterest(int interest) {
         this.interest = interest;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

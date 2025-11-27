@@ -15,7 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConversationState {
     private final List<String> history = new ArrayList<>();
     private final Map<String, Object> slots = new ConcurrentHashMap<>();
-    private int interestScore = 0;
+    private int interestScore = 5; // Default interest score
+    private String currentStage;
 
     public void addMessage(String message) {
         history.add(message);
@@ -23,6 +24,13 @@ public class ConversationState {
 
     public List<String> getHistory() {
         return history;
+    }
+
+    public List<String> getHistory(int lastN) {
+        if (lastN <= 0 || lastN >= history.size()) {
+            return history;
+        }
+        return history.subList(history.size() - lastN, history.size());
     }
 
     public void putSlot(String k, Object v) {
@@ -41,7 +49,15 @@ public class ConversationState {
         return interestScore;
     }
 
-    public void adjustInterest(int delta) {
-        interestScore += delta;
+    public void setInterestScore(int interestScore) {
+        this.interestScore = interestScore;
+    }
+
+    public String getCurrentStage() {
+        return currentStage;
+    }
+
+    public void setCurrentStage(String currentStage) {
+        this.currentStage = currentStage;
     }
 }

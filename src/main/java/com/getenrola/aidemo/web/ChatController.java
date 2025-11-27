@@ -3,6 +3,7 @@ package com.getenrola.aidemo.web;
 import com.getenrola.aidemo.agent.ConversationState;
 import com.getenrola.aidemo.agent.Orchestrator;
 import com.getenrola.aidemo.model.AgentResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
-
+    @Autowired
     private final Orchestrator orchestrator;
     private final Map<String, ConversationState> sessions = new ConcurrentHashMap<>();
 

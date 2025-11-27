@@ -16,7 +16,13 @@ public record WorkerResponse(
         String stage,
 
         @JsonProperty(required = true, value = "lead_interest")
-        int lead_interest
+        double lead_interest,   // -1.0 to +1.0
+
+        @JsonProperty(required = false, value = "next_recommended_worker")
+        String next_recommended_worker,  // worker can suggest handoff
+
+        @JsonProperty(required = false, value = "confidence")
+        double confidence  // how confident this worker is
 ) {
 }
 

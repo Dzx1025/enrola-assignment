@@ -18,6 +18,8 @@ import java.util.Map;
 public class PenSalesOpenAiAgentTest {
 
     @Autowired
+    private Orchestrator orchestrator;
+    @Autowired
     private OpenAiClientWrapper openAiClientWrapper;
 
     @Test
@@ -30,25 +32,6 @@ public class PenSalesOpenAiAgentTest {
 
     @Test
     void orchestratorTest() throws Exception {
-        Orchestrator orchestrator = new Orchestrator(
-                Map.of(
-                        "general", new GeneralWorker(openAiClientWrapper),
-                        "price_comparison", new PriceComparisonWorker(openAiClientWrapper),
-                        "objection", new ObjectionWorker(openAiClientWrapper),
-                        "closing", new ClosingWorker(openAiClientWrapper)
-                ),
-                openAiClientWrapper
-        );
-
-        ConversationState state = new ConversationState();
-        AgentResult r1 = orchestrator.route("Hi", state);
-        Assertions.assertNotNull(r1);
-        AgentResult r2 = orchestrator.route("I need a pen for signing contracts", state);
-        Assertions.assertNotNull(r2);
-        AgentResult r3 = orchestrator.route("How much does it cost?", state);
-        Assertions.assertNotNull(r3);
-        AgentResult r4 = orchestrator.route("Sounds good, send link", state);
-        Assertions.assertNotNull(r4);
-        System.out.println(state.getHistory());
+        orchestrator.getWorkers().forEach((k, v) -> System.out.println(k + " -> " + v.getClass().getSimpleName()));
     }
 }
