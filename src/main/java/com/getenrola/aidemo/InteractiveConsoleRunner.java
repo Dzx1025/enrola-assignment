@@ -4,6 +4,7 @@ import com.getenrola.aidemo.agent.ConversationState;
 import com.getenrola.aidemo.agent.Orchestrator;
 import com.getenrola.aidemo.model.AgentResult;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 @Component
+@Profile("cli")
 public class InteractiveConsoleRunner implements CommandLineRunner {
 
     private static final String ANSI_RESET = "\u001B[0m";
