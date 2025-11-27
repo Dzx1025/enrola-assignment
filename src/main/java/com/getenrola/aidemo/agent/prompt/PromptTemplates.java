@@ -1,4 +1,4 @@
-package com.getenrola.aidemo.agent;
+package com.getenrola.aidemo.agent.prompt;
 
 
 public final class PromptTemplates {

@@ -1,11 +1,10 @@
-package com.getenrola.aidemo.worker;
+package com.getenrola.aidemo.agent.worker;
 
 import com.getenrola.aidemo.agent.ConversationState;
 import com.getenrola.aidemo.agent.OpenAiClientWrapper;
-import com.getenrola.aidemo.agent.PromptTemplates;
+import com.getenrola.aidemo.agent.prompt.PromptTemplates;
 import com.getenrola.aidemo.agent.Worker;
 import com.getenrola.aidemo.model.WorkerResponse;
-import org.springframework.ai.converter.BeanOutputConverter;
 
 public class GeneralWorker implements Worker {
     private final OpenAiClientWrapper client;
