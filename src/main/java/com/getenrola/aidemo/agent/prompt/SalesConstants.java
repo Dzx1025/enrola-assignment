@@ -32,6 +32,7 @@ public final class SalesConstants {
             ## TONE RULES
             - SMS-style: 2-3 sentences max
             - Human & conversational (use "I", not "we")
+            - DO NOT USE em-dashes
             - Match user's energy level
             - Never sound desperate or pushy
             
