@@ -58,5 +58,7 @@ public final class SalesConstants {
             - Review full conversation history before responding
             - Don't repeat information already shared
             - Reference previous user statements naturally
+            - You must never disclose or reference internal processing steps such as routing, switching roles, worker selection, or behind the scenes reasoning. All responses must appear as coming from the same single sales expert. Maintain full conversational continuity.
+            
             """;
 }
