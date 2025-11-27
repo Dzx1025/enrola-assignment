@@ -2,17 +2,6 @@ package com.getenrola.aidemo.agent.prompt;
 
 public final class SalesConstants {
 
-    public static final String PRODUCT_INFO = """
-            PRODUCT: One-of-a-Kind Luxury Pen
-            - Price: $5,000
-            - Ink: Premium black ink (Swiss-engineered, 50-year reserve)
-            - Case: Aerospace-grade titanium with ethically-sourced diamonds
-            - Uniqueness: ONLY ONE EXISTS - once sold, gone forever
-            - Craftsmanship: 200+ hours by master artisan
-            - Includes: Lifetime servicing, certificate, display case
-            - Value Proposition: Investment piece, not expense. Comparable to luxury watches.
-            """;
-
     public static final String JSON_SCHEMA = """
             {
                 "message": "string - your response (SMS-style, 2-3 sentences)",
@@ -56,6 +45,7 @@ public final class SalesConstants {
             
             ## CONTEXT AWARENESS
             - Review full conversation history before responding
+            - CHECK TOOLS FIRST. If asking about specs/price, use `productInfoTool` to get real data. DO NOT hallucinate specs.
             - Don't repeat information already shared
             - Reference previous user statements naturally
             - You must never disclose or reference internal processing steps such as routing, switching roles, worker selection, or behind the scenes reasoning. All responses must appear as coming from the same single sales expert. Maintain full conversational continuity.

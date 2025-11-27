@@ -26,6 +26,7 @@ public class OpenAiClientWrapper {
                         .temperature(1.0)  // disable temperature for gpt5 series
                         .build())
                 .user(userPrompt)
+                .tools(new ProductTools())
                 .call().entity(responseType);
     }
 
@@ -39,6 +40,7 @@ public class OpenAiClientWrapper {
                         .build())
                 .system(systemPrompt)
                 .user(userPrompt)
+                .tools(new ProductTools())
                 .call().entity(responseType);
     }
 
@@ -53,6 +55,7 @@ public class OpenAiClientWrapper {
                         .build())
                 .system(systemPrompt)
                 .user(userPrompt)
+                .tools(new ProductTools())
                 .call().entity(responseType);
     }
 
