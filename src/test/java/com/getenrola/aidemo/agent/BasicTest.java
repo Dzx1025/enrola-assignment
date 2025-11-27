@@ -1,21 +1,15 @@
 package com.getenrola.aidemo.agent;
 
-import com.getenrola.aidemo.model.AgentResult;
 import com.getenrola.aidemo.model.WorkerResponse;
-import com.getenrola.aidemo.worker.ClosingWorker;
 import com.getenrola.aidemo.worker.GeneralWorker;
-import com.getenrola.aidemo.worker.ObjectionWorker;
-import com.getenrola.aidemo.worker.PriceComparisonWorker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Map;
-
 
 @SpringBootTest
-public class PenSalesOpenAiAgentTest {
+public class BasicTest {
 
     @Autowired
     private Orchestrator orchestrator;
