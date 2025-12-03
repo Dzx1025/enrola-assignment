@@ -1,5 +1,6 @@
 package com.getenrola.aidemo.agent;
 
+import com.getenrola.aidemo.model.ConversationState;
 import com.getenrola.aidemo.model.WorkerResponse;
 import com.getenrola.aidemo.agent.worker.GeneralWorker;
 import org.junit.jupiter.api.Assertions;

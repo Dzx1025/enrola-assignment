@@ -1,6 +1,7 @@
 package com.getenrola.aidemo.agent;
 
 import com.getenrola.aidemo.model.AgentResult;
+import com.getenrola.aidemo.model.ConversationState;
 import com.getenrola.aidemo.model.WorkerResponse;
 import org.springframework.stereotype.Component;
 

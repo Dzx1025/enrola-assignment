@@ -1,6 +1,6 @@
 package com.getenrola.aidemo;
 
-import com.getenrola.aidemo.agent.ConversationState;
+import com.getenrola.aidemo.model.ConversationState;
 import com.getenrola.aidemo.agent.Orchestrator;
 import com.getenrola.aidemo.model.AgentResult;
 import org.springframework.boot.CommandLineRunner;

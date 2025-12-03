@@ -1,7 +1,7 @@
 package com.getenrola.aidemo.agent.worker;
 
 
-import com.getenrola.aidemo.agent.ConversationState;
+import com.getenrola.aidemo.model.ConversationState;
 import com.getenrola.aidemo.agent.OpenAiClientWrapper;
 import com.getenrola.aidemo.agent.prompt.PromptTemplates;
 import com.getenrola.aidemo.agent.Worker;
